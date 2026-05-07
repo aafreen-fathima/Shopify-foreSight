@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRD: Shopify Foresight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f6f6f7;
+  --surface: #ffffff;
+  --border: #e3e3e5;
+  --border-strong: #c9ccd0;
+  --text: #1a1a1a;
+  --text-2: #616770;
+  --text-3: #8c9196;
+  --green: #008060;
+  --green-light: #e3f1ee;
+  --green-mid: #b5d5ce;
+  --red: #d72c0d;
+  --red-light: #fdf0ed;
+  --amber: #916a00;
+  --amber-light: #fdf6e3;
+  --blue: #005bd3;
+  --blue-light: #e8f1fd;
+  --font: 'Inter', -apple-system, sans-serif;
+  --r: 8px; --r-sm: 4px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); font-size: 14px; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+nav { position: sticky; top: 0; z-index: 100; height: 52px; padding: 0 20px; background: rgba(255,255,255,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0; }
+.nav-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-right: 16px; }
+.nav-logo { width: 26px; height: 26px; background: var(--green); border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+.nav-logo svg { width: 14px; height: 14px; fill: white; }
+.nav-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.nav-sep { width: 1px; height: 16px; background: var(--border); margin: 0 12px; }
+.nav-crumbs { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); }
+.nav-crumbs a { color: var(--text-2); text-decoration: none; }
+.nav-crumbs a:hover { color: var(--text); }
+.nav-crumbs span { color: var(--text-3); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-status { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; background: var(--amber-light); color: var(--amber); border: 1px solid #e8c97a; }
+.nav-back { font-size: 12px; color: var(--text-2); text-decoration: none; padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--r-sm); transition: border-color 0.12s; }
+.nav-back:hover { border-color: var(--border-strong); color: var(--text); }
+
+/* LAYOUT */
+.doc-wrap { display: flex; max-width: 1100px; margin: 0 auto; padding: 32px 24px; gap: 40px; }
+
+/* SIDEBAR TOC */
+.toc { width: 200px; flex-shrink: 0; position: sticky; top: 80px; align-self: flex-start; }
+.toc-title { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.toc-list { list-style: none; }
+.toc-item a { display: block; font-size: 12px; color: var(--text-2); text-decoration: none; padding: 4px 8px; border-radius: var(--r-sm); transition: background 0.1s, color 0.1s; line-height: 1.4; }
+.toc-item a:hover { background: var(--bg); color: var(--text); }
+.toc-item.sub a { padding-left: 16px; font-size: 11px; color: var(--text-3); }
+.toc-item.sub a:hover { color: var(--text-2); }
+.toc-divider { height: 1px; background: var(--border); margin: 8px 0; }
+
+/* MAIN CONTENT */
+.doc-main { flex: 1; min-width: 0; }
+
+/* DOC HEADER */
+.doc-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 28px 32px; margin-bottom: 24px; box-shadow: var(--shadow); }
+.doc-type { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.doc-title { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 6px; }
+.doc-subtitle { font-size: 14px; color: var(--text-2); margin-bottom: 20px; line-height: 1.5; }
+.doc-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-top: 18px; border-top: 1px solid var(--border); }
+.dm-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
+.dm-val { font-size: 13px; color: var(--text); }
+.dm-val a { color: var(--blue); text-decoration: none; }
+.dm-val a:hover { text-decoration: underline; }
+
+/* STATUS BADGES */
+.badge { display: inline-flex; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; }
+.badge-draft { background: var(--amber-light); color: var(--amber); }
+.badge-review { background: var(--blue-light); color: var(--blue); }
+.badge-approved { background: var(--green-light); color: var(--green); }
+.badge-new { background: var(--green-light); color: var(--green); border: 1px solid var(--green-mid); }
+
+/* SECTIONS */
+.doc-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 24px 32px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.doc-section + .doc-section { }
+.sec-anchor { display: block; position: relative; top: -80px; visibility: hidden; }
+h2.sec-title { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+h2.sec-title .sec-num { font-size: 11px; font-weight: 600; color: var(--text-3); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; }
+h3.sub-title { font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 8px; }
+h3.sub-title:first-child { margin-top: 0; }
+p.doc-p { font-size: 13px; color: var(--text-2); line-height: 1.75; margin-bottom: 10px; }
+p.doc-p:last-child { margin-bottom: 0; }
+p.doc-p strong { color: var(--text); font-weight: 500; }
+
+/* CALLOUT BOXES */
+.callout { display: flex; gap: 10px; padding: 12px 14px; border-radius: var(--r); margin: 14px 0; }
+.callout svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { font-size: 13px; line-height: 1.6; }
+.callout-body strong { font-weight: 500; }
+.callout-info { background: var(--blue-light); border: 1px solid #c0d8f7; }
+.callout-info svg { color: var(--blue); }
+.callout-info .callout-body { color: #003d80; }
+.callout-warn { background: var(--amber-light); border: 1px solid #e8c97a; }
+.callout-warn .callout-body { color: #5c4300; }
+.callout-success { background: var(--green-light); border: 1px solid var(--green-mid); }
+.callout-success .callout-body { color: #004c3f; }
+.callout-danger { background: var(--red-light); border: 1px solid #f4bcb2; }
+.callout-danger .callout-body { color: #7a1b0d; }
+
+/* TABLES */
+.doc-table-wrap { margin: 14px 0; overflow-x: auto; }
+table.doc-table { width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.doc-table thead tr { background: var(--bg); }
+.doc-table th { padding: 9px 13px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+.doc-table tbody tr { border-bottom: 1px solid var(--border); }
+.doc-table tbody tr:last-child { border-bottom: none; }
+.doc-table tbody tr:hover { background: #fafafa; }
+.doc-table td { padding: 10px 13px; vertical-align: top; font-size: 13px; color: var(--text-2); line-height: 1.55; }
+.doc-table td:first-child { color: var(--text); font-weight: 500; }
+.doc-table td.center { text-align: center; }
+.tick-y { color: var(--green); font-weight: 600; }
+.tick-n { color: var(--text-3); }
+.tick-p { color: var(--amber); }
+
+/* USER STORIES */
+.story-list { list-style: none; }
+.story-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.story-item:last-child { border-bottom: none; }
+.story-role { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.story-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+.story-text em { font-style: normal; color: var(--text-2); }
+.story-ac { margin-top: 8px; }
+.story-ac-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.story-ac-list { list-style: none; }
+.story-ac-list li { font-size: 12px; color: var(--text-2); padding: 2px 0 2px 14px; position: relative; line-height: 1.5; }
+.story-ac-list li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-size: 11px; font-weight: 600; }
+
+/* METRICS TABLE */
+.metric-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; }
+.metric-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 0; border-bottom: 2px solid var(--border); }
+.metric-table td { padding: 10px 0; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 13px; }
+.metric-table td:first-child { color: var(--text); font-weight: 500; width: 30%; }
+.metric-table td:nth-child(2) { color: var(--text-2); width: 35%; }
+.metric-table td:nth-child(3) { color: var(--text-2); width: 35%; }
+.metric-table tr:last-child td { border-bottom: none; }
+
+/* RISK TABLE */
+.risk-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.risk-row:last-child { border-bottom: none; }
+.risk-sev { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; margin-top: 1px; }
+.risk-sev-h { background: var(--red-light); color: var(--red); }
+.risk-sev-m { background: var(--amber-light); color: var(--amber); }
+.risk-sev-l { background: var(--green-light); color: var(--green); }
+.risk-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.risk-desc { font-size: 12px; color: var(--text-2); line-height: 1.55; }
+.risk-mit { font-size: 12px; color: var(--text-3); margin-top: 3px; }
+.risk-mit span { color: var(--text-2); }
+
+/* PHASES */
+.phase-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 14px 0; }
+.phase-card { border: 1px solid var(--border); border-radius: var(--r); padding: 16px; position: relative; overflow: hidden; }
+.phase-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--green); }
+.phase-num { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.phase-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.phase-items { list-style: none; }
+.phase-items li { font-size: 12px; color: var(--text-2); padding: 2px 0 2px 12px; position: relative; line-height: 1.5; }
+.phase-items li::before { content: '—'; position: absolute; left: 0; color: var(--text-3); font-size: 11px; }
+
+/* CHANGELOG */
+.changelog { list-style: none; }
+.cl-item { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.cl-item:last-child { border-bottom: none; }
+.cl-date { font-size: 11px; color: var(--text-3); width: 72px; flex-shrink: 0; padding-top: 1px; }
+.cl-author { font-size: 11px; color: var(--green); width: 80px; flex-shrink: 0; padding-top: 1px; font-weight: 500; }
+.cl-msg { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+
+/* FOOTNOTE */
+.doc-footer { padding: 20px 0 0; text-align: center; }
+.doc-footer p { font-size: 11px; color: var(--text-3); line-height: 1.6; }
+
+@media (max-width: 768px) {
+  .doc-wrap { flex-direction: column; padding: 16px; }
+  .toc { display: none; }
+  .doc-meta-grid { grid-template-columns: 1fr 1fr; }
+  .phase-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <svg height="24" viewBox="0 0 109.5 124.5" xmlns="http://www.w3.org/2000/svg"><path d="M74.7 14.8s-.3 0-.7.1c-.1-.4-.4-.8-.6-1.2-1-1.6-2.4-2.4-4.1-2.4h-.3c-.5-.7-1.1-1.3-1.8-1.8-2.1-1.8-4.7-2.7-7.4-2.6-5.8.2-11.5 4.3-16.2 11.6-3.3 5.2-5.8 11.7-6.5 16.7l-11.3 3.5c-3.3 1-3.4 1.1-3.9 4.2C21.5 45.8 8 149.7 8 149.7l82.7 14.3V14.3c-5.3.1-13.4.4-16 .5zm-8.4 2.6c-2 .6-4.2 1.3-6.4 2-.6-3.2-1.8-6.5-3.5-9.3 4.4.8 7.1 5 9.9 7.3zM55.7 9.8c.4 0 .8 0 1.2.1-4.2 2-8.7 7-10.6 17.1l-8 2.5c2.2-8.5 8.3-19.7 17.4-19.7zm-6.4 53.7c.4 6.4 17.3 7.8 18.3 22.8.7 11.8-6.3 19.9-16.4 20.5-12.2.8-18.9-6.4-18.9-6.4l2.6-10.9s6.7 5 12 4.7c3.5-.2 4.8-3.1 4.7-5-.5-8.4-14.3-7.9-15.2-21.6-.8-11.6 6.9-23.3 23.8-24.4 6.5-.4 9.8 1.2 9.8 1.2l-3.8 14.4s-4.3-2-9.4-1.6c-7.4.4-7.6 5.2-7.5 6.3zM61 8.8c2.5 2.6 4.2 6.3 4.8 11.3l-10.2 3.2C57.3 15.9 59.8 10.9 61 8.8z" fill="#96bf48"/><path d="M90.9 164l24.6-6.2S103.9 49.2 103.8 48.4c-.1-.8-.7-1.3-1.4-1.3s-12.7-.9-12.7-.9-7.1-6.9-9.8-9.5v128.3z" fill="#5e8e3e"/></svg>
+    <span class="nav-name">Shopify</span>
+  </a>
+  <div class="nav-sep"></div>
+  <div class="nav-crumbs">
+    <a href="index.html">Feature Proposal</a>
+    <span>›</span>
+    <span>PRD: Foresight</span>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back">← Back to proposal</a>
+  </div>
+</nav>
+
+<div class="doc-wrap">
+
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="toc-title">On this page</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#overview">Overview</a></li>
+      <li class="toc-item sub"><a href="#problem">Problem statement</a></li>
+      <li class="toc-item sub"><a href="#goals">Goals & non-goals</a></li>
+      <div class="toc-divider"></div>
+      <li class="toc-item"><a href="#users">Users & personas</a></li>
+      <li class="toc-item"><a href="#stories">User stories</a></li>
+      <div class="toc-divider"></div>
+      <li class="toc-item"><a href="#requirements">Requirements</a></li>
+      <li class="toc-item sub"><a href="#functional">Functional</a></li>
+      <li class="toc-item sub"><a href="#nonfunctional">Non-functional</a></li>
+      <div class="toc-divider"></div>
+      <li class="toc-item"><a href="#metrics">Success metrics</a></li>
+      <li class="toc-item"><a href="#roadmap">Phased roadmap</a></li>
+      <li class="toc-item"><a href="#risks">Risks</a></li>
+      <li class="toc-item"><a href="#openqs">Open questions</a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="doc-main">
+
+    <!-- HEADER -->
+    <div class="doc-header">
+      <div class="doc-type">Product Requirements Document</div>
+      <div class="doc-title">Shopify Foresight</div>
+      <div class="doc-subtitle">A native proactive intelligence layer for Shopify Admin — surfacing prioritized insights, anomaly alerts, and one-click actions for every merchant on the platform.</div>
+    </div>
+
+    <!-- 1. OVERVIEW -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="overview"></span>
+      <h2 class="sec-title"><span class="sec-num">01</span> Overview</h2>
+
+      <span class="sec-anchor" id="problem"></span>
+      <h3 class="sub-title">Problem statement</h3>
+      <p class="doc-p">Shopify's native analytics dashboard is reactive by design. It shows merchants what already happened — sales yesterday, sessions last week, top products last month. It doesn't yet surface emerging risks, flag anomalies, or suggest actions before problems show up in revenue.</p>
+      <p class="doc-p">Most merchants aren't data analysts. They're founders and operators juggling everything at once, and the question they most often have at the start of a day is simply: <strong>what should I pay attention to today?</strong> That answer takes real digging to find in the current admin — and for many merchants, it never gets found at all.</p>
+      <p class="doc-p">Shopify already holds a remarkable amount of useful data — order history, real-time sessions, payment flows, inventory signals, and patterns across millions of stores. Foresight is an idea for making that data work a little harder for merchants, proactively rather than on demand.</p>
+
+      <div class="callout callout-info" style="margin-top:16px;">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#005bd3" stroke-width="1.3"/><path d="M8 7v4.5M8 5.2v.01" stroke="#005bd3" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <div class="callout-body"><strong>The opportunity:</strong> Merchants who get timely, relevant signals from their platform are better positioned to act on growth opportunities and catch problems early. Foresight is designed around that idea.</div>
+      </div>
+
+      <span class="sec-anchor" id="goals"></span>
+      <h3 class="sub-title">Goals</h3>
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr><th>Goal</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td>Surface 3–5 prioritized, actionable insights daily for every merchant</td><td>Replace passive pull with active push — make the admin feel like a morning briefing</td></tr>
+            <tr><td>Detect anomalies (conversion drops, inventory risk, revenue spikes) in real time</td><td>Most merchants don't monitor dashboards continuously — anomalies go unnoticed for days</td></tr>
+            <tr><td>Enable natural language Q&A on store data</td><td>Lower the skill barrier — non-technical founders should get answers without SQL or analyst support</td></tr>
+            <tr><td>Drive daily-active-admin behavior across all plan tiers</td><td>Merchants who open admin daily are more engaged, more likely to upgrade, and less likely to churn</td></tr>
+            <tr><td>Use cross-merchant benchmark data as a native moat</td><td>No third-party app can provide category-level comps — this is Shopify's unique structural advantage</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sub-title">Non-goals (v1)</h3>
+      <p class="doc-p">The following are explicitly out of scope for the initial launch and should not be used to evaluate Phase 1 success:</p>
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr><th>Non-goal</th><th>Reasoning</th></tr></thead>
+          <tbody>
+            <tr><td>Ad channel attribution (Meta, Google, TikTok pixel)</td><td>Triple Whale owns this space; Foresight does not need a first-party pixel to be valuable in v1</td></tr>
+            <tr><td>Financial integrations (Xero, QuickBooks)</td><td>Cross-system P&L is a Luca AI differentiator — adds complexity without serving the core use case</td></tr>
+            <tr><td>Replacing Shopify Analytics dashboard</td><td>Foresight sits alongside existing reports as an intelligence layer, not a replacement</td></tr>
+            <tr><td>Custom report builder</td><td>ShopifyQL already serves power users — Foresight targets the non-technical majority</td></tr>
+            <tr><td>Mobile app (Shopify mobile) integration</td><td>Phase 2 consideration — admin web is the primary surface for launch</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. USERS -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="users"></span>
+      <h2 class="sec-title"><span class="sec-num">02</span> Users & personas</h2>
+
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr><th>Persona</th><th>Description</th><th>Current behavior</th><th>Foresight value</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>The Founder-Operator</td>
+              <td>Solo or small team running a $50K–$2M DTC brand. Wears every hat. Opens analytics weekly at best.</td>
+              <td>Checks Shopify dashboard when something feels wrong. Misses most issues until they hit revenue.</td>
+              <td>Daily briefing surfaces what matters — they act on things they wouldn't have seen otherwise.</td>
+            </tr>
+            <tr>
+              <td>The Growth Hire</td>
+              <td>First marketing or ops hire at a $1M–$10M brand. Owns dashboards but uses multiple disconnected tools.</td>
+              <td>Pays for Triple Whale or similar. Spends time stitching reports across Shopify, Klaviyo, and ad platforms.</td>
+              <td>Consolidated native intelligence reduces app dependency. Benchmark data gives context they can't get elsewhere.</td>
+            </tr>
+            <tr>
+              <td>The New Merchant</td>
+              <td>Under $100K GMV. Just started on Shopify. Overwhelmed by the admin. Doesn't know what to look at.</td>
+              <td>Rarely opens analytics. Makes decisions on gut feel or social media advice.</td>
+              <td>Foresight's proactive feed teaches them what matters — converts a passive user into an engaged one.</td>
+            </tr>
+            <tr>
+              <td>The Scaling Brand</td>
+              <td>$5M–$50M GMV. Has a small data team but uses Shopify Plus. Wants more from the platform.</td>
+              <td>Relies on custom Snowflake pipelines or expensive BI tools. ShopifyQL helps but requires technical skill.</td>
+              <td>Benchmark intelligence and Q&A give strategic context alongside existing deep tooling. Reduces analyst time on routine questions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. USER STORIES -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="stories"></span>
+      <h2 class="sec-title"><span class="sec-num">03</span> User stories</h2>
+
+      <ul class="story-list">
+        <li class="story-item">
+          <div class="story-role">Founder-Operator</div>
+          <div class="story-text">As a merchant, I want to open Shopify Admin and immediately see what needs my attention today, <em>so that I don't have to manually dig through reports to find problems.</em></div>
+          <div class="story-ac">
+            <div class="story-ac-label">Acceptance criteria</div>
+            <ul class="story-ac-list">
+              <li>Foresight feed is visible on Admin home or as a dedicated nav item without any setup</li>
+              <li>At least 1 insight is surfaced within the first 24 hours of store activity</li>
+              <li>Each insight has a plain-English title, a 1–2 sentence explanation, and a severity indicator</li>
+            </ul>
+          </div>
+        </li>
+        <li class="story-item">
+          <div class="story-role">Growth Hire</div>
+          <div class="story-text">As a growth manager, I want to be alerted when conversion rate drops significantly on a specific device type, <em>so that I can investigate and fix the issue before it compounds over days.</em></div>
+          <div class="story-ac">
+            <div class="story-ac-label">Acceptance criteria</div>
+            <ul class="story-ac-list">
+              <li>Conversion anomaly is detected within 4 hours of the drop occurring</li>
+              <li>Alert specifies device type, magnitude of drop, and comparison baseline</li>
+              <li>Notification delivered via Admin notification center and optionally via email</li>
+            </ul>
+          </div>
+        </li>
+        <li class="story-item">
+          <div class="story-role">Founder-Operator</div>
+          <div class="story-text">As a merchant, I want to ask plain English questions about my store and get answers without needing SQL or external tools, <em>so that I can make data-driven decisions without hiring an analyst.</em></div>
+          <div class="story-ac">
+            <div class="story-ac-label">Acceptance criteria</div>
+            <ul class="story-ac-list">
+              <li>Q&A accepts free-text questions about orders, products, sessions, and customer behavior</li>
+              <li>Responses synthesize across multiple data dimensions in a single answer</li>
+              <li>Response time is under 5 seconds for standard queries</li>
+              <li>System gracefully handles out-of-scope questions with a helpful fallback</li>
+            </ul>
+          </div>
+        </li>
+        <li class="story-item">
+          <div class="story-role">Scaling Brand</div>
+          <div class="story-text">As a head of e-commerce, I want to see how my store's key metrics compare to similar brands in my category, <em>so that I can understand whether a metric issue is specific to my store or an industry-wide trend.</em></div>
+          <div class="story-ac">
+            <div class="story-ac-label">Acceptance criteria</div>
+            <ul class="story-ac-list">
+              <li>Benchmark data is anonymized and aggregated — no individual store data exposed</li>
+              <li>Category matching uses product taxonomy and GMV band, not self-reported data</li>
+              <li>Benchmarks shown for conversion rate, return rate, repeat purchase rate, and AOV</li>
+              <li>Benchmark data is labeled with sample size and methodology footnote</li>
+            </ul>
+          </div>
+        </li>
+        <li class="story-item">
+          <div class="story-role">Founder-Operator</div>
+          <div class="story-text">As a merchant, I want to take action on an insight without leaving the Foresight screen, <em>so that the time between seeing a problem and fixing it is as short as possible.</em></div>
+          <div class="story-ac">
+            <div class="story-ac-label">Acceptance criteria</div>
+            <ul class="story-ac-list">
+              <li>Each insight surfaces 1 recommended action with a clear CTA</li>
+              <li>Actions that can be executed natively (inventory reorder, discount creation) happen in-context</li>
+              <li>Actions that require deeper configuration link directly to the relevant Admin page</li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 4. REQUIREMENTS -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="requirements"></span>
+      <h2 class="sec-title"><span class="sec-num">04</span> Requirements</h2>
+
+      <span class="sec-anchor" id="functional"></span>
+      <h3 class="sub-title">Functional requirements</h3>
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr><th style="width:8%">ID</th><th style="width:12%">Priority</th><th style="width:45%">Requirement</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>FR-01</td><td><span class="badge badge-approved">Must have</span></td><td>Foresight feed visible in Shopify Admin without any merchant configuration</td><td>Zero-setup is the core differentiator vs. third-party tools</td></tr>
+            <tr><td>FR-02</td><td><span class="badge badge-approved">Must have</span></td><td>Anomaly detection for: conversion rate drop, checkout abandonment spike, SKU inventory risk, revenue outlier (up or down)</td><td>Phase 1 core. Detection window: 4-hour rolling average vs. 30-day baseline</td></tr>
+            <tr><td>FR-03</td><td><span class="badge badge-approved">Must have</span></td><td>Each insight includes: title, plain-English explanation, severity level, timestamp, and recommended action</td><td>Copy guidelines: follow Polaris voice — direct, specific, merchant-first</td></tr>
+            <tr><td>FR-04</td><td><span class="badge badge-approved">Must have</span></td><td>Insights delivered to Admin notification center; email opt-in available</td><td>Do not default to email — respect notification preferences</td></tr>
+            <tr><td>FR-05</td><td><span class="badge badge-review">Should have</span></td><td>Natural language Q&A interface for store data queries</td><td>Phase 2. Powered by existing Shopify AI infrastructure. Scope: orders, products, sessions, customer behavior</td></tr>
+            <tr><td>FR-06</td><td><span class="badge badge-review">Should have</span></td><td>One-click actions from insight cards (inventory reorder, discount creation, page link)</td><td>Phase 2. Actions scoped to existing Admin capabilities — no new backend needed</td></tr>
+            <tr><td>FR-07</td><td><span class="badge badge-draft">Nice to have</span></td><td>Anonymous cross-merchant benchmark data by category and GMV band</td><td>Phase 3. Requires data pipeline work and legal review on anonymization methodology</td></tr>
+            <tr><td>FR-08</td><td><span class="badge badge-review">Should have</span></td><td>Merchant ability to dismiss or snooze individual insights</td><td>Critical for preventing alert fatigue. Dismissed insights improve signal model over time</td></tr>
+            <tr><td>FR-09</td><td><span class="badge badge-approved">Must have</span></td><td>Insight feed available on all Shopify plan tiers (Basic through Plus)</td><td>Feature access may be tiered — basic anomaly alerts on all plans, Q&A and benchmarks on Shopify/Advanced+</td></tr>
+            <tr><td>FR-10</td><td><span class="badge badge-approved">Must have</span></td><td>All data processing must occur within Shopify's existing data infrastructure — no external data transfer</td><td>Privacy requirement. Foresight uses the same data access model as existing Analytics reports</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="sec-anchor" id="nonfunctional"></span>
+      <h3 class="sub-title">Non-functional requirements</h3>
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr><th>Category</th><th>Requirement</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Performance</td><td>Insight feed load time</td><td>Under 1.5s p95 on standard Shopify Admin connection</td></tr>
+            <tr><td>Performance</td><td>Q&A response time</td><td>Under 5s for standard queries; under 12s for complex multi-dimension queries</td></tr>
+            <tr><td>Performance</td><td>Anomaly detection latency</td><td>Alert surfaced within 4 hours of anomaly threshold being crossed</td></tr>
+            <tr><td>Reliability</td><td>Uptime</td><td>99.9% availability — matches existing Shopify Admin SLA</td></tr>
+            <tr><td>Privacy</td><td>Data residency</td><td>Merchant data does not leave Shopify's existing regional data infrastructure</td></tr>
+            <tr><td>Privacy</td><td>Benchmark anonymization</td><td>No individual store data attributable. Minimum cohort size: 50 stores per benchmark cell</td></tr>
+            <tr><td>Accessibility</td><td>WCAG compliance</td><td>WCAG 2.1 AA — consistent with Polaris accessibility standards</td></tr>
+            <tr><td>Localisation</td><td>Language support</td><td>English at launch. Localisation roadmap aligned with Shopify Admin i18n team</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5. METRICS -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="metrics"></span>
+      <h2 class="sec-title"><span class="sec-num">05</span> Success metrics</h2>
+
+      <p class="doc-p">Metrics are organized into three tiers: adoption (are merchants using it?), engagement (is it useful?), and business impact (does it move the needle?).</p>
+
+      <table class="metric-table">
+        <thead><tr><th>Metric</th><th>Definition</th><th>Target (90 days post-launch)</th></tr></thead>
+        <tbody>
+          <tr><td>Foresight daily active rate</td><td>% of active merchants who open Foresight at least once per day</td><td>≥ 25% (baseline: Admin daily-active rate ~12%)</td></tr>
+          <tr><td>Insight click-through rate</td><td>% of surfaced insights that receive a merchant click or action</td><td>≥ 30%</td></tr>
+          <tr><td>Insight dismissal rate</td><td>% of insights explicitly dismissed (signal quality proxy)</td><td>≤ 20% (lower = better signal quality)</td></tr>
+          <tr><td>Q&A query volume</td><td>Weekly unique merchants using Q&A interface</td><td>≥ 15% of Foresight DAU (Phase 2)</td></tr>
+          <tr><td>Plan upgrade rate</td><td>% of Basic plan merchants upgrading to Shopify plan within 60 days of first Foresight use</td><td>+2pp vs. control group</td></tr>
+          <tr><td>Churn rate impact</td><td>30-day churn rate for merchants with ≥5 Foresight interactions vs. those with 0</td><td>-15% relative churn reduction</td></tr>
+          <tr><td>Third-party analytics app installs</td><td>Change in Triple Whale / Lifetimely / similar installs among Foresight users</td><td>-10% relative install rate (measure ecosystem displacement)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn" style="margin-top:16px;">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L14.5 13H1.5L8 1.5z" stroke="#916a00" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6.5v3.5M8 11.5v.01" stroke="#916a00" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <div class="callout-body"><strong>Measurement risk:</strong> Attribution of churn reduction to Foresight specifically will require a clean holdout experiment. Recommend running a 20% holdback group at launch to establish causal impact vs. correlation.</div>
+      </div>
+    </div>
+
+    <!-- 6. ROADMAP -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="roadmap"></span>
+      <h2 class="sec-title"><span class="sec-num">06</span> Phased roadmap</h2>
+
+      <div class="phase-grid">
+        <div class="phase-card">
+          <div class="phase-num">Phase 1 · Q3 2026</div>
+          <div class="phase-title">Anomaly alerts</div>
+          <ul class="phase-items">
+            <li>Conversion rate drop detection</li>
+            <li>Checkout abandonment spike</li>
+            <li>Inventory risk (days-of-stock)</li>
+            <li>Revenue outlier (up & down)</li>
+            <li>Admin notification center delivery</li>
+            <li>Email opt-in for critical alerts</li>
+            <li>Insight dismiss / snooze</li>
+            <li>Available on all plan tiers</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Phase 2 · Q4 2026</div>
+          <div class="phase-title">Insight feed + Q&A</div>
+          <ul class="phase-items">
+            <li>Daily prioritized insight feed (3–5 items)</li>
+            <li>Trending product detection</li>
+            <li>Customer cohort shifts</li>
+            <li>Natural language Q&A on store data</li>
+            <li>One-click actions (inventory, discounts)</li>
+            <li>Personalization based on feedback</li>
+            <li>Shopify / Advanced plan gating for Q&A</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">Phase 3 · Q1 2027</div>
+          <div class="phase-title">Network benchmarks</div>
+          <ul class="phase-items">
+            <li>Anonymous cross-merchant benchmarks</li>
+            <li>Category + GMV band segmentation</li>
+            <li>Conversion rate, return rate, AOV, LTV</li>
+            <li>Seasonal benchmark adjustments</li>
+            <li>"Your store vs. similar stores" view</li>
+            <li>Plus plan gating for full benchmark suite</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:4px;">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#008060" stroke-width="1.3"/><path d="M4.5 8l2.5 2.5 4.5-5" stroke="#008060" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="callout-body"><strong>Phase 3 is the strategic moat.</strong> Cross-merchant benchmarks are the only capability no third-party app can replicate. Delay is acceptable if it means doing it right — minimum 50-store cohort floor, legal sign-off on anonymization, and opt-in from merchants in beta cohort.</div>
+      </div>
+    </div>
+
+    <!-- 7. RISKS -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="risks"></span>
+      <h2 class="sec-title"><span class="sec-num">07</span> Risks & mitigations</h2>
+
+      <div class="risk-row">
+        <div class="risk-sev risk-sev-h">High</div>
+        <div>
+          <div class="risk-title">Alert fatigue if early insights aren't relevant enough</div>
+          <div class="risk-desc">If the first wave of insights feels generic or too frequent, merchants will ignore or dismiss the feature before it has a chance to demonstrate value. Getting the signal quality right early matters a lot.</div>
+          <div class="risk-mit">Mitigation: <span>Start with a small set of high-confidence anomaly types only. Set conservative thresholds (e.g., conversion drops &gt;15% vs. baseline before alerting). Use dismissal rate as a primary signal quality metric, and run a closed beta with a small merchant cohort before broad rollout.</span></div>
+        </div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-sev risk-sev-h">High</div>
+        <div>
+          <div class="risk-title">Relationship with analytics app partners</div>
+          <div class="risk-desc">Shopify has a large and valuable app ecosystem. A native intelligence feature that overlaps with existing analytics apps could create tension with partners. Positioning and communication matters here.</div>
+          <div class="risk-mit">Mitigation: <span>Frame Foresight as a foundation for merchants who haven't adopted dedicated analytics tools yet — not a replacement for tools like Triple Whale. Explore a data API that lets partner apps surface their data within Foresight rather than compete with it. Communicate with key partners before any public launch.</span></div>
+        </div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-sev risk-sev-m">Medium</div>
+        <div>
+          <div class="risk-title">Insight accuracy — building merchant trust takes time</div>
+          <div class="risk-desc">A single misfired "urgent" alert — say, flagging a conversion drop caused by a data lag rather than a real issue — can erode trust quickly. Merchants need to be able to rely on what Foresight surfaces.</div>
+          <div class="risk-mit">Mitigation: <span>Require a 95% confidence threshold before surfacing anomaly alerts. Include a brief "how we calculated this" note on each insight. Add a simple feedback mechanism ("Was this useful?") from day one to help the model improve over time.</span></div>
+        </div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-sev risk-sev-m">Medium</div>
+        <div>
+          <div class="risk-title">Benchmark data requires careful privacy and legal review</div>
+          <div class="risk-desc">Cross-merchant benchmarks are exciting but need to be handled thoughtfully. Cohort sizes that are too small could inadvertently surface competitive information, and regional privacy regulations (GDPR, CCPA) add complexity.</div>
+          <div class="risk-mit">Mitigation: <span>Phase 3 requires full legal review before any data pipeline work begins. Enforce a minimum cohort size of 50 stores per benchmark cell. Consider an opt-in model for merchants contributing to the benchmark pool.</span></div>
+        </div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-sev risk-sev-l">Low</div>
+        <div>
+          <div class="risk-title">Q&A responses that miss the mark</div>
+          <div class="risk-desc">Natural language Q&A on store data is powerful but requires guardrails. Responses that are plausible but inaccurate could lead merchants to make decisions based on bad information.</div>
+          <div class="risk-mit">Mitigation: <span>Always ground responses in cited data (e.g., "Based on your last 847 orders…"). Include a confidence signal. For out-of-scope or ambiguous questions, return a helpful fallback that links to the relevant Analytics report rather than attempting a guess.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. OPEN QUESTIONS -->
+    <div class="doc-section">
+      <span class="sec-anchor" id="openqs"></span>
+      <h2 class="sec-title"><span class="sec-num">08</span> Open questions</h2>
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr><th>Question</th><th>Owner</th><th>Target resolution</th></tr></thead>
+          <tbody>
+            <tr><td>Should Foresight be a new Admin nav item or embedded in the existing Analytics section?</td><td>Design (Polaris team)</td><td>Before Phase 1 kickoff</td></tr>
+            <tr><td>What is the plan-tier gating model? Which features are available on Basic vs. Shopify vs. Advanced vs. Plus?</td><td>PM + Growth</td><td>Before Phase 1 kickoff</td></tr>
+            <tr><td>How do we handle new stores with insufficient historical data for anomaly detection baselines? (&lt;30 days data)</td><td>Data Science</td><td>Phase 1 design review</td></tr>
+            <tr><td>What is the partner communication and API strategy for Triple Whale, Lifetimely, and other analytics partners?</td><td>Partner Relations + PM</td><td>4 weeks before Phase 1 launch</td></tr>
+            <tr><td>Does Foresight require a new data infrastructure investment or can it use existing Shopify data pipelines?</td><td>Data Engineering</td><td>Phase 1 scoping</td></tr>
+            <tr><td>How is Foresight branded in the admin? Is "Foresight" the final name or an internal codename?</td><td>Brand + PM</td><td>Phase 1 design review</td></tr>
+            <tr><td>What is the legal framework for using cross-merchant data for benchmarks, particularly in GDPR regions?</td><td>Legal + Privacy</td><td>Before Phase 3 work begins</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="doc-footer">
+      <p><a href="index.html" style="color:var(--blue);font-size:12px;">← Back to feature proposal</a></p>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
