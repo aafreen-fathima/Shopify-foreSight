@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify Foresight — Feature Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f6f6f7;
+  --bg2: #f1f1f2;
+  --surface: #ffffff;
+  --border: #e3e3e5;
+  --border-strong: #c9ccd0;
+  --text: #1a1a1a;
+  --text-2: #616770;
+  --text-3: #8c9196;
+  --green: #008060;
+  --green-light: #e3f1ee;
+  --green-mid: #b5d5ce;
+  --red: #d72c0d;
+  --red-light: #fdf0ed;
+  --amber: #916a00;
+  --amber-light: #fdf6e3;
+  --blue: #005bd3;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --r: 8px;
+  --r-sm: 4px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); font-size: 14px; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.45s ease, transform 0.45s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.07s; } .d2 { transition-delay: 0.14s; } .d3 { transition-delay: 0.21s; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px; padding: 0 20px;
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0;
+}
+.nav-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-right: 24px; }
+.nav-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.nav-sep { width: 1px; height: 18px; background: var(--border); margin: 0 14px; }
+.nav-context { font-size: 13px; color: var(--text-2); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.nav-link { font-size: 13px; color: var(--text-2); text-decoration: none; padding: 6px 9px; border-radius: var(--r-sm); transition: background 0.12s, color 0.12s; }
+.nav-link:hover { background: var(--bg); color: var(--text); }
+.nav-btn { font-family: var(--font); font-size: 13px; font-weight: 500; padding: 7px 14px; background: var(--green); color: white; border: none; border-radius: var(--r-sm); cursor: pointer; margin-left: 6px; transition: background 0.12s; }
+.nav-btn:hover { background: #006e52; }
+
+/* LAYOUT */
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 56px 0; }
+.section+.section { border-top: 1px solid var(--border); }
+
+/* HERO */
+.hero { background: var(--surface); border-bottom: 1px solid var(--border); padding: 52px 0 56px; }
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--green); background: var(--green-light); padding: 4px 10px; border-radius: 20px; margin-bottom: 18px; }
+.hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.hero-h1 { font-size: 30px; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; color: var(--text); max-width: 540px; margin-bottom: 14px; }
+.hero-h1 span { color: var(--green); }
+.hero-p { font-size: 15px; color: var(--text-2); max-width: 500px; line-height: 1.65; margin-bottom: 28px; font-weight: 400; }
+.hero-meta { display: flex; gap: 28px; padding-top: 20px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.hm-label { font-size: 11px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.hm-val { font-size: 13px; color: var(--text); }
+
+/* SECTION HEADER */
+.stag { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.sh2 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; margin-bottom: 10px; }
+.sbody { font-size: 14px; color: var(--text-2); line-height: 1.75; max-width: 600px; margin-bottom: 8px; }
+.sbody:last-child { margin-bottom: 0; }
+
+/* CALLOUT */
+.callout { display: flex; gap: 11px; padding: 12px 14px; background: var(--green-light); border: 1px solid var(--green-mid); border-radius: var(--r); margin: 20px 0; }
+.callout svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout-text { font-size: 13px; color: #004c3f; line-height: 1.6; }
+.callout-text strong { font-weight: 500; }
+
+/* GRIDS */
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 20px 0; }
+.g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin: 20px 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; box-shadow: var(--shadow); }
+.card-num { font-size: 11px; font-weight: 600; color: var(--text-3); margin-bottom: 10px; }
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.card-body { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 20px 0; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; box-shadow: var(--shadow); }
+.stat-n { font-size: 26px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px; }
+.stat-l { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+
+/* FEATURE LAYOUT */
+.feat-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 36px; align-items: start; margin-top: 24px; }
+.feat-list { list-style: none; }
+.feat-item { display: flex; gap: 11px; padding: 13px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.feat-item:last-child { border-bottom: none; }
+.fi-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--green-light); border: 1.5px solid var(--green-mid); flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.fi-dot::after { content:''; width:5px; height:5px; border-radius:50%; background:var(--green); }
+.fi-title { font-weight: 500; display: block; margin-bottom: 2px; }
+.fi-sub { color: var(--text-2); line-height: 1.6; }
+
+/* ADMIN MOCKUP */
+.admin-shell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow-md); }
+.admin-bar { height: 38px; background: #1c1c1e; display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+.dot3 { display:flex; gap:4px; }
+.d3b { width:9px; height:9px; border-radius:50%; }
+.d3b-r{background:#ff5f56;} .d3b-y{background:#ffbd2e;} .d3b-g{background:#27c93f;}
+.addr-bar { flex:1; background:rgba(255,255,255,0.07); border-radius:3px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; color:rgba(255,255,255,0.35); font-family:var(--font); }
+.admin-body { display:flex; min-height:380px; }
+.sidebar { width:190px; flex-shrink:0; background:#1c1c1e; padding:10px 0; }
+.sb-group-label { font-size:10px; color:rgba(255,255,255,0.28); font-weight:600; text-transform:uppercase; letter-spacing:0.1em; padding:8px 14px 3px; }
+.sb-item { display:flex; align-items:center; gap:7px; padding:7px 14px; font-size:12px; color:rgba(255,255,255,0.45); cursor:default; }
+.sb-item.active { color:white; background:rgba(255,255,255,0.09); border-radius:4px; margin:0 6px; padding:7px 8px; }
+.sb-item svg { width:14px; height:14px; flex-shrink:0; }
+.admin-main { flex:1; background:var(--bg); padding:16px; overflow:auto; }
+.page-hd { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+.page-title { font-size:15px; font-weight:600; color:var(--text); }
+.page-sub { font-size:11px; color:var(--text-3); margin-top:1px; }
+.new-badge { display:inline-flex; font-size:10px; font-weight:500; padding:2px 7px; border-radius:20px; background:var(--green-light); color:var(--green); border:1px solid var(--green-mid); margin-left:6px; }
+.m-row { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:10px; }
+.m-card { background:var(--surface); border:1px solid var(--border); border-radius:5px; padding:10px; }
+.m-label { font-size:9px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:3px; }
+.m-val { font-size:16px; font-weight:600; color:var(--text); line-height:1; margin-bottom:2px; }
+.m-delta { font-size:10px; }
+.up{color:var(--green);} .dn{color:var(--red);}
+.ins-header { font-size:10px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:5px; }
+.ins-list { display:flex; flex-direction:column; gap:5px; margin-bottom:8px; }
+.ins { background:var(--surface); border:1px solid var(--border); border-radius:5px; padding:9px 10px; display:flex; gap:8px; align-items:flex-start; }
+.ins.red { border-left:2.5px solid var(--red); }
+.ins.grn { border-left:2.5px solid var(--green); }
+.ins.amb { border-left:2.5px solid #b98900; }
+.ins-ico { font-size:12px; margin-top:1px; line-height:1; flex-shrink:0; }
+.ins-t { font-size:11px; font-weight:500; color:var(--text); margin-bottom:1px; }
+.ins-d { font-size:10px; color:var(--text-2); line-height:1.4; }
+.ins-b { font-size:9px; font-weight:500; padding:2px 6px; border-radius:8px; flex-shrink:0; white-space:nowrap; }
+.ib-r{background:var(--red-light);color:var(--red);}
+.ib-g{background:var(--green-light);color:var(--green);}
+.ib-a{background:var(--amber-light);color:var(--amber);}
+.ask-row { background:var(--surface); border:1px solid var(--border); border-radius:5px; padding:8px 10px; display:flex; gap:7px; align-items:center; }
+.ask-lbl { font-size:10px; color:var(--text-3); flex-shrink:0; }
+.ask-ans { font-size:10px; color:var(--text); line-height:1.5; }
+.ask-ans strong { color:var(--green); font-weight:600; }
+.blink { display:inline-block; width:1.5px; height:10px; background:var(--green); vertical-align:text-bottom; margin-left:1px; animation:blink 1.1s step-end infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* TABLE */
+.tbl-wrap { margin:20px 0; overflow-x:auto; }
+table.comp { width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow); }
+.comp thead tr { background:var(--bg2); }
+.comp th { padding:9px 13px; text-align:left; font-size:11px; font-weight:600; color:var(--text-2); text-transform:uppercase; letter-spacing:0.06em; border-bottom:1px solid var(--border); }
+.comp th:not(:first-child){text-align:center;}
+.comp th.csf { background:var(--green-light); color:var(--green); }
+.comp tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
+.comp tbody tr:hover { background:#fafafa; }
+.comp tbody tr:last-child { border-bottom:none; }
+.comp tr.cat td { background:var(--bg2); font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.06em; padding:6px 13px; }
+.comp td { padding:10px 13px; vertical-align:middle; }
+.comp td:not(:first-child){text-align:center;}
+.comp td.csf { background:rgba(0,128,96,0.03); }
+.cn { font-size:13px; color:var(--text); }
+.cs { font-size:11px; color:var(--text-3); margin-top:1px; }
+.ty{color:var(--green);font-size:13px;font-weight:500;}
+.tp{color:var(--amber);font-size:12px;}
+.tn{color:var(--border-strong);font-size:12px;}
+
+/* SCORES */
+.score-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
+.sc-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:16px; box-shadow:var(--shadow); }
+.sc-name { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; }
+.sc-tw{color:#005bd3;} .sc-lu{color:var(--green);} .sc-sf{color:var(--green);}
+.sc-row { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+.sc-row:last-child{margin-bottom:0;}
+.sc-dim { font-size:11px; color:var(--text-2); width:82px; flex-shrink:0; }
+.sc-track { flex:1; height:4px; background:var(--bg2); border-radius:2px; border:1px solid var(--border); }
+.sc-fill { height:4px; border-radius:2px; }
+.f-blue{background:#005bd3;} .f-teal{background:var(--green);} .f-green{background:var(--green);}
+.sc-val { font-size:11px; color:var(--text-3); width:22px; text-align:right; flex-shrink:0; }
+
+/* VERDICT */
+.verd-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
+.verd-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:16px; box-shadow:var(--shadow); }
+.vl { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-3); margin-bottom:7px; }
+.vl-sf { color:var(--green); }
+.vb { font-size:13px; color:var(--text-2); line-height:1.65; }
+
+/* ROADMAP */
+.rm-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
+.rm-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:16px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+.rm-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--green); }
+.rm-phase { font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:5px; }
+.rm-title { font-size:13px; font-weight:600; color:var(--text); margin-bottom:5px; }
+.rm-body { font-size:12px; color:var(--text-2); line-height:1.6; }
+
+/* CLOSING */
+.closing { background:var(--surface); border-top:1px solid var(--border); padding:56px 0; }
+.cl-h { font-size:22px; font-weight:600; letter-spacing:-0.015em; line-height:1.3; max-width:500px; margin-bottom:12px; }
+.cl-h span { color:var(--green); }
+.cl-p { font-size:14px; color:var(--text-2); max-width:480px; line-height:1.75; margin-bottom:7px; }
+.cta-row { display:flex; gap:8px; margin-top:24px; flex-wrap:wrap; }
+.btn-p { font-family:var(--font); font-size:13px; font-weight:500; padding:9px 16px; background:var(--green); color:white; border:none; border-radius:var(--r-sm); cursor:pointer; transition:background 0.12s; }
+.btn-p:hover{background:#006e52;}
+.btn-s { font-family:var(--font); font-size:13px; font-weight:500; padding:9px 16px; background:var(--surface); color:var(--text); border:1px solid var(--border-strong); border-radius:var(--r-sm); cursor:pointer; transition:border-color 0.12s; }
+.btn-s:hover{border-color:var(--text-3);}
+
+footer { background:var(--bg2); border-top:1px solid var(--border); padding:16px 24px; display:flex; justify-content:space-between; }
+.fl { font-size:12px; color:var(--text-3); }
+
+@media(max-width:720px){
+  .g3,.stats,.score-grid,.verd-grid,.rm-grid{grid-template-columns:1fr;}
+  .g2,.feat-grid{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  nav .nav-right a{display:none;}
+  .hero-h1{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">
+    <svg height="28" viewBox="0 0 109.5 124.5" xmlns="http://www.w3.org/2000/svg"><path d="M74.7 14.8s-.3 0-.7.1c-.1-.4-.4-.8-.6-1.2-1-1.6-2.4-2.4-4.1-2.4h-.3c-.5-.7-1.1-1.3-1.8-1.8-2.1-1.8-4.7-2.7-7.4-2.6-5.8.2-11.5 4.3-16.2 11.6-3.3 5.2-5.8 11.7-6.5 16.7l-11.3 3.5c-3.3 1-3.4 1.1-3.9 4.2C21.5 45.8 8 149.7 8 149.7l82.7 14.3V14.3c-5.3.1-13.4.4-16 .5zm-8.4 2.6c-2 .6-4.2 1.3-6.4 2-.6-3.2-1.8-6.5-3.5-9.3 4.4.8 7.1 5 9.9 7.3zM55.7 9.8c.4 0 .8 0 1.2.1-4.2 2-8.7 7-10.6 17.1l-8 2.5c2.2-8.5 8.3-19.7 17.4-19.7zm-6.4 53.7c.4 6.4 17.3 7.8 18.3 22.8.7 11.8-6.3 19.9-16.4 20.5-12.2.8-18.9-6.4-18.9-6.4l2.6-10.9s6.7 5 12 4.7c3.5-.2 4.8-3.1 4.7-5-.5-8.4-14.3-7.9-15.2-21.6-.8-11.6 6.9-23.3 23.8-24.4 6.5-.4 9.8 1.2 9.8 1.2l-3.8 14.4s-4.3-2-9.4-1.6c-7.4.4-7.6 5.2-7.5 6.3zM61 8.8c2.5 2.6 4.2 6.3 4.8 11.3l-10.2 3.2C57.3 15.9 59.8 10.9 61 8.8z" fill="#96bf48"/><path d="M90.9 164l24.6-6.2S103.9 49.2 103.8 48.4c-.1-.8-.7-1.3-1.4-1.3s-12.7-.9-12.7-.9-7.1-6.9-9.8-9.5v128.3z" fill="#5e8e3e"/></svg>
+    <span class="nav-name">Shopify</span>
+  </a>
+  <div class="nav-sep"></div>
+  <span class="nav-context">Feature Proposal</span>
+  <div class="nav-right">
+    <a href="#gap" class="nav-link">The opportunity</a>
+    <a href="#proposal" class="nav-link">Foresight</a>
+    <a href="#competitive" class="nav-link">Landscape</a>
+    <a href="#case" class="nav-link">Why it works</a>
+    <a href="prd.html" class="nav-btn" style="text-decoration:none;">View PRD</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge reveal"><div class="hero-badge-dot"></div>Feature Proposal · May 2026</div>
+    <h1 class="hero-h1 reveal d1">What if Shopify's analytics<br><span>told you what to do next?</span></h1>
+    <p class="hero-p reveal d2">A feature idea for a native intelligence layer that helps merchants act on the data Shopify already has — without any setup or extra tools.</p>
+  </div>
+</section>
+
+<!-- GAP -->
+<section id="gap" class="section">
+  <div class="wrap">
+    <div class="stag reveal">01 — The opportunity</div>
+    <h2 class="sh2 reveal">Analytics tell you what happened — but not what to do next</h2>
+    <p class="sbody reveal">Shopify's analytics do a great job of showing historical data — sales trends, traffic sources, top products. But for most merchants, the harder question is knowing which of those numbers actually need their attention today.</p>
+    <p class="sbody reveal">Most store owners are juggling a lot at once. They're not digging into dashboards every morning — and when something shifts quietly in the data, it often goes unnoticed until it's already affected revenue.</p>
+
+    <div class="callout reveal">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="#008060" stroke-width="1.5"/><path d="M10 9v5M10 6.5v.01" stroke="#008060" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="callout-text"><strong>What merchants say:</strong> Many store owners find it hard to know what to look at in their analytics, and have no clear framework for understanding which metrics actually matter for their stage of growth. — Synthesized from community feedback and App Store reviews, 2025.</div>
+    </div>
+
+    <div class="g3">
+      <div class="card reveal"><div class="card-num">Observation 01</div><div class="card-title">Data is reactive by default</div><div class="card-body">Reports surface what already happened. There's no native way to get ahead of a slowing conversion rate or a trending product before the moment passes.</div></div>
+      <div class="card reveal d1"><div class="card-num">Observation 02</div><div class="card-title">Deeper insights require higher plans</div><div class="card-body">Advanced reporting is tied to higher-tier plans, which means newer and smaller merchants — often the ones with the most to gain — have limited access to analytics tools.</div></div>
+      <div class="card reveal d2"><div class="card-num">Observation 03</div><div class="card-title">No proactive nudges exist today</div><div class="card-body">The dashboard waits to be opened. There's nothing that flags an unusual checkout drop-off or an inventory risk before a merchant goes looking for it themselves.</div></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card reveal"><div class="stat-n">2M+</div><div class="stat-l">Active merchants receiving zero proactive intelligence from the platform they pay for monthly</div></div>
+      <div class="stat-card reveal d1"><div class="stat-n">$219</div><div class="stat-l">Monthly cost of third-party tools merchants pay just to fill the gap Shopify leaves open</div></div>
+      <div class="stat-card reveal d2"><div class="stat-n">7×</div><div class="stat-l">Growth in AI-referred Shopify traffic between Jan 2025 and early 2026 — intelligence is table stakes now</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSAL -->
+<section id="proposal" class="section" style="background:var(--surface);">
+  <div class="wrap">
+    <div class="stag reveal">02 — The feature</div>
+    <h2 class="sh2 reveal">Introducing Shopify Foresight</h2>
+    <p class="sbody reveal">A native AI intelligence layer built directly into Shopify Admin. Instead of a dashboard you pull, it's a feed that pushes. Every morning it surfaces 3–5 prioritized insights with plain-language explanations and one-click actions — no SQL, no third-party app, no analyst required.</p>
+
+    <div class="feat-grid">
+      <ul class="feat-list reveal">
+        <li class="feat-item"><div class="fi-dot"></div><div><span class="fi-title">Proactive push, not passive pull</span><span class="fi-sub">Anomaly detection, trend acceleration, inventory risk, and revenue leakage are all flagged before you notice them. The dashboard finds you.</span></div></li>
+        <li class="feat-item"><div class="fi-dot"></div><div><span class="fi-title">Natural language Q&amp;A on your store</span><span class="fi-sub">Ask "why did my conversion drop on Thursday?" and get an answer synthesized across sessions, UTM sources, device type, and cart data — in plain English.</span></div></li>
+        <li class="feat-item"><div class="fi-dot"></div><div><span class="fi-title">One-click actions from every insight</span><span class="fi-sub">Reorder inventory, A/B test a checkout element, apply a discount — all executable from the insight card without leaving the screen.</span></div></li>
+        <li class="feat-item"><div class="fi-dot"></div><div><span class="fi-title">Network-level benchmarking</span><span class="fi-sub">Anonymous cross-merchant comps across 2M+ stores. Your return rate vs. your category. Data no third-party app can ever replicate.</span></div></li>
+      </ul>
+
+      <div class="admin-shell reveal d1">
+        <div class="admin-bar">
+          <div class="dot3"><div class="d3b d3b-r"></div><div class="d3b d3b-y"></div><div class="d3b d3b-g"></div></div>
+          <div class="addr-bar">admin.shopify.com / foresight</div>
+        </div>
+        <div class="admin-body">
+          <div class="sidebar">
+            <div class="sb-group-label">Store</div>
+            <div class="sb-item"><svg viewBox="0 0 16 16" fill="rgba(255,255,255,0.35)"><path d="M8 1L1 5.5V14h4V9.5h6V14h4V5.5L8 1z"/></svg>Home</div>
+            <div class="sb-item"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="2.5" width="14" height="11" rx="1.5" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/><path d="M1 6.5h14" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/></svg>Orders</div>
+            <div class="sb-item"><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h7" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round"/></svg>Products</div>
+            <div class="sb-group-label" style="margin-top:6px;">Analytics</div>
+            <div class="sb-item active"><svg viewBox="0 0 16 16" fill="none"><path d="M2 12l3.5-4.5 2.5 2.5 3-5 2.5 2.5" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Foresight</div>
+            <div class="sb-item"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="9" width="3" height="5" rx="1" fill="rgba(255,255,255,0.35)"/><rect x="6" y="6" width="3" height="8" rx="1" fill="rgba(255,255,255,0.35)"/><rect x="11" y="3" width="3" height="11" rx="1" fill="rgba(255,255,255,0.35)"/></svg>Reports</div>
+          </div>
+          <div class="admin-main">
+            <div class="page-hd">
+              <div>
+                <div class="page-title">Foresight <span class="new-badge">New</span></div>
+                <div class="page-sub">Monday, May 4 · Your store briefing</div>
+              </div>
+            </div>
+            <div class="m-row">
+              <div class="m-card"><div class="m-label">Revenue (7d)</div><div class="m-val">$18,240</div><div class="m-delta up">↑ 12% vs last week</div></div>
+              <div class="m-card"><div class="m-label">Conversion</div><div class="m-val">2.4%</div><div class="m-delta dn">↓ 0.3 pts — flagged</div></div>
+              <div class="m-card"><div class="m-label">Repeat buyers</div><div class="m-val">34%</div><div class="m-delta up">↑ 5 pts this month</div></div>
+            </div>
+            <div class="ins-header">Today's insights</div>
+            <div class="ins-list">
+              <div class="ins red"><div class="ins-ico">↘</div><div style="flex:1"><div class="ins-t">Mobile checkout drop-off spike</div><div class="ins-d">32% abandonment at payment — up from 19% avg. Started Friday 6 pm, likely Klarna prompt.</div></div><div class="ins-b ib-r">Urgent</div></div>
+              <div class="ins grn"><div class="ins-ico">↗</div><div style="flex:1"><div class="ins-t">Linen Bundle trending — 7× velocity</div><div class="ins-d">Organic only. Consider a flash feature or upsell now.</div></div><div class="ins-b ib-g">Opportunity</div></div>
+              <div class="ins amb"><div class="ins-ico">!</div><div style="flex:1"><div class="ins-t">4 top SKUs under 10 days stock</div><div class="ins-d">Sand Linen Pillow sells out May 12. Lead time 18 days.</div></div><div class="ins-b ib-a">Act now</div></div>
+            </div>
+            <div class="ask-row">
+              <div class="ask-lbl">Ask →</div>
+              <div class="ask-ans">Fix checkout + Linen upsell → projected <strong>+$2,100–$3,400</strong> recoverable revenue before Friday<span class="blink"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITIVE -->
+<section id="competitive" class="section">
+  <div class="wrap">
+    <div class="stag reveal">03 — Competitive analysis</div>
+    <h2 class="sh2 reveal">Three players. One job. Very different bets.</h2>
+    <p class="sbody reveal">Triple Whale built the best marketing attribution tool in DTC. Luca AI is betting on unified cross-functional intelligence plus embedded capital. Foresight's advantage is something neither can replicate — native platform access to the full data graph of 2 million stores.</p>
+
+    <div class="tbl-wrap reveal">
+      <table class="comp">
+        <thead><tr>
+          <th style="width:38%">Capability</th>
+          <th style="width:18%">Triple Whale</th>
+          <th style="width:18%">Luca AI</th>
+          <th class="csf" style="width:20%">Foresight ✦</th>
+        </tr></thead>
+        <tbody>
+          <tr class="cat"><td colspan="4">Data access</td></tr>
+          <tr><td><div class="cn">Shopify native data</div><div class="cs">Orders, sessions, inventory</div></td><td><span class="ty">✓</span></td><td><span class="ty">✓</span></td><td class="csf"><span class="ty">✓ Full</span></td></tr>
+          <tr><td><div class="cn">Cross-merchant benchmarks</div><div class="cs">Anonymous network-level comps</div></td><td><span class="tp">Partial</span></td><td><span class="tn">—</span></td><td class="csf"><span class="ty">✓ Unique moat</span></td></tr>
+          <tr><td><div class="cn">Financial integrations</div><div class="cs">Xero, QuickBooks, true P&amp;L</div></td><td><span class="tn">—</span></td><td><span class="ty">✓</span></td><td class="csf"><span class="tn">v1 scope</span></td></tr>
+          <tr><td><div class="cn">Ad channel attribution</div><div class="cs">Meta, Google, TikTok pixel</div></td><td><span class="ty">✓ Best-in-class</span></td><td><span class="ty">✓</span></td><td class="csf"><span class="tp">Limited</span></td></tr>
+          <tr class="cat"><td colspan="4">Intelligence layer</td></tr>
+          <tr><td><div class="cn">Proactive push insights</div><div class="cs">Alerts without being asked</div></td><td><span class="tp">Moby agents</span></td><td><span class="ty">✓</span></td><td class="csf"><span class="ty">✓ Core feature</span></td></tr>
+          <tr><td><div class="cn">Natural language Q&amp;A</div><div class="cs">Ask your store anything</div></td><td><span class="ty">✓ Moby Chat</span></td><td><span class="ty">✓ Core</span></td><td class="csf"><span class="ty">✓</span></td></tr>
+          <tr><td><div class="cn">One-click actions</div><div class="cs">Execute insight from admin</div></td><td><span class="tp">Ad channels only</span></td><td><span class="tn">—</span></td><td class="csf"><span class="ty">✓</span></td></tr>
+          <tr class="cat"><td colspan="4">Distribution &amp; access</td></tr>
+          <tr><td><div class="cn">Zero-setup onboarding</div><div class="cs">Works on day 1, no config</div></td><td><span class="tn">Requires setup</span></td><td><span class="tn">10+ integrations</span></td><td class="csf"><span class="ty">✓ Native</span></td></tr>
+          <tr><td><div class="cn">Available on all plan tiers</div><div class="cs">Including Basic and Starter</div></td><td><span class="tp">Free tier exists</span></td><td><span class="tn">Custom pricing</span></td><td class="csf"><span class="ty">✓ Proposed</span></td></tr>
+          <tr><td><div class="cn">Entry pricing</div></td><td><span style="color:var(--text-2);font-size:12px;">$149–$219/mo</span></td><td><span style="color:var(--text-2);font-size:12px;">€129–599/mo</span></td><td class="csf"><span style="color:var(--green);font-size:12px;font-weight:500;">Bundled / free tier</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="reveal" style="font-size:16px;font-weight:600;margin:28px 0 4px;letter-spacing:-0.01em;">Scores across six dimensions</h3>
+    <div class="score-grid">
+      <div class="sc-card reveal">
+        <div class="sc-name sc-tw">Triple Whale</div>
+        <div class="sc-row"><div class="sc-dim">Attribution</div><div class="sc-track"><div class="sc-fill f-blue" style="width:95%"></div></div><div class="sc-val">95</div></div>
+        <div class="sc-row"><div class="sc-dim">AI depth</div><div class="sc-track"><div class="sc-fill f-blue" style="width:75%"></div></div><div class="sc-val">75</div></div>
+        <div class="sc-row"><div class="sc-dim">Setup ease</div><div class="sc-track"><div class="sc-fill f-blue" style="width:60%"></div></div><div class="sc-val">60</div></div>
+        <div class="sc-row"><div class="sc-dim">Data breadth</div><div class="sc-track"><div class="sc-fill f-blue" style="width:70%"></div></div><div class="sc-val">70</div></div>
+        <div class="sc-row"><div class="sc-dim">Accessibility</div><div class="sc-track"><div class="sc-fill f-blue" style="width:55%"></div></div><div class="sc-val">55</div></div>
+        <div class="sc-row"><div class="sc-dim">Moat</div><div class="sc-track"><div class="sc-fill f-blue" style="width:65%"></div></div><div class="sc-val">65</div></div>
+      </div>
+      <div class="sc-card reveal d1">
+        <div class="sc-name sc-lu">Luca AI</div>
+        <div class="sc-row"><div class="sc-dim">Attribution</div><div class="sc-track"><div class="sc-fill f-teal" style="width:70%"></div></div><div class="sc-val">70</div></div>
+        <div class="sc-row"><div class="sc-dim">AI depth</div><div class="sc-track"><div class="sc-fill f-teal" style="width:90%"></div></div><div class="sc-val">90</div></div>
+        <div class="sc-row"><div class="sc-dim">Setup ease</div><div class="sc-track"><div class="sc-fill f-teal" style="width:50%"></div></div><div class="sc-val">50</div></div>
+        <div class="sc-row"><div class="sc-dim">Data breadth</div><div class="sc-track"><div class="sc-fill f-teal" style="width:95%"></div></div><div class="sc-val">95</div></div>
+        <div class="sc-row"><div class="sc-dim">Accessibility</div><div class="sc-track"><div class="sc-fill f-teal" style="width:40%"></div></div><div class="sc-val">40</div></div>
+        <div class="sc-row"><div class="sc-dim">Moat</div><div class="sc-track"><div class="sc-fill f-teal" style="width:55%"></div></div><div class="sc-val">55</div></div>
+      </div>
+      <div class="sc-card reveal d2">
+        <div class="sc-name sc-sf">Foresight</div>
+        <div class="sc-row"><div class="sc-dim">Attribution</div><div class="sc-track"><div class="sc-fill f-green" style="width:45%"></div></div><div class="sc-val">45</div></div>
+        <div class="sc-row"><div class="sc-dim">AI depth</div><div class="sc-track"><div class="sc-fill f-green" style="width:70%"></div></div><div class="sc-val">70</div></div>
+        <div class="sc-row"><div class="sc-dim">Setup ease</div><div class="sc-track"><div class="sc-fill f-green" style="width:100%"></div></div><div class="sc-val">100</div></div>
+        <div class="sc-row"><div class="sc-dim">Data breadth</div><div class="sc-track"><div class="sc-fill f-green" style="width:80%"></div></div><div class="sc-val">80</div></div>
+        <div class="sc-row"><div class="sc-dim">Accessibility</div><div class="sc-track"><div class="sc-fill f-green" style="width:100%"></div></div><div class="sc-val">100</div></div>
+        <div class="sc-row"><div class="sc-dim">Moat</div><div class="sc-track"><div class="sc-fill f-green" style="width:95%"></div></div><div class="sc-val">95</div></div>
+      </div>
+    </div>
+
+    <h3 class="reveal" style="font-size:16px;font-weight:600;margin:28px 0 4px;letter-spacing:-0.01em;">If Foresight ships — what happens next?</h3>
+    <div class="g2">
+      <div class="card reveal"><div class="card-title">Triple Whale focuses on attribution depth</div><div class="card-body" style="margin-top:6px;">Their strength is pixel-level marketing attribution — a genuinely hard problem they've solved well. That focus means they serve performance marketers at scaling brands best, and are less suited to smaller merchants or non-ad growth channels.</div></div>
+      <div class="card reveal d1"><div class="card-title">Luca AI adds a financial layer</div><div class="card-body" style="margin-top:6px;">An interesting approach that bundles Shopify analytics with accounting integrations and access to working capital. Powerful for brands that need a unified financial view, though the setup complexity makes it better suited to larger operations.</div></div>
+      <div class="card reveal"><div class="card-title">The opportunity for Foresight</div><div class="card-body" style="margin-top:6px;">Both tools require setup, expertise, and ongoing cost. Most Shopify merchants haven't adopted either. A native, zero-setup layer that works on day one for every merchant is a meaningfully different kind of product.</div></div>
+      <div class="card reveal d1"><div class="card-title">A complementary, not competing, approach</div><div class="card-body" style="margin-top:6px;">Foresight doesn't need to replace the app ecosystem — tools like Triple Whale go much deeper on attribution than any native feature should. The goal is to serve the merchants in the middle who currently get nothing proactive at all.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS CASE -->
+<section id="case" class="section" style="background:var(--surface);">
+  <div class="wrap">
+    <div class="stag reveal">04 — Why it works</div>
+    <h2 class="sh2 reveal">Shopify already has everything it needs to build this</h2>
+    <p class="sbody reveal">What makes Foresight interesting as a native feature isn't that it does something third-party tools can't — it's that it removes all the friction those tools require. No app install, no configuration, no monthly fee on top of your plan. It just works, because the data is already there.</p>
+    <p class="sbody reveal">Shopify's network of millions of stores also creates a unique opportunity for benchmarking — giving merchants context that no standalone analytics app can offer, because only the platform itself can see across everyone.</p>
+
+    <div class="callout reveal">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="#008060" stroke-width="1.5"/><path d="M10 9v5M10 6.5v.01" stroke="#008060" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="callout-text">When merchants have clear, timely signals from their platform, they're better positioned to grow — and merchants who grow tend to stay. <strong>Foresight is as much about helping merchants succeed as it is about building a better analytics feature.</strong></div>
+    </div>
+
+    <h3 class="reveal" style="font-size:16px;font-weight:600;margin:28px 0 4px;letter-spacing:-0.01em;">How each tool fits a different merchant</h3>
+    <div class="verd-grid">
+      <div class="verd-card reveal"><div class="vl">Triple Whale</div><div class="vb">A great fit for brands running significant paid ad spend who need precise attribution across channels. Purpose-built for performance marketers and worth the investment if ads are a core growth driver.</div></div>
+      <div class="verd-card reveal d1"><div class="vl">Luca AI</div><div class="vb">Well-suited to scaling brands that need a unified view across Shopify, accounting tools, and ad platforms — especially ones that want embedded capital access alongside their analytics.</div></div>
+      <div class="verd-card reveal d2"><div class="vl vl-sf">Foresight</div><div class="vb">Designed for the merchants who haven't adopted a dedicated analytics tool yet — which is most of them. Zero setup, proactive insights, and benchmarks that make the data feel meaningful from day one.</div></div>
+    </div>
+
+    <h3 class="reveal" style="font-size:16px;font-weight:600;margin:28px 0 4px;letter-spacing:-0.01em;">A phased approach to building it</h3>
+    <div class="rm-grid">
+      <div class="rm-card reveal"><div class="rm-phase">Phase 1 · Q3 2026</div><div class="rm-title">Anomaly alerts</div><div class="rm-body">Proactive notifications for conversion shifts, inventory risk, and revenue changes. Native to admin, no setup needed, available on all plan tiers.</div></div>
+      <div class="rm-card reveal d1"><div class="rm-phase">Phase 2 · Q4 2026</div><div class="rm-title">Daily insight feed + Q&amp;A</div><div class="rm-body">A prioritized morning briefing and natural language Q&A on store data. One-click actions on key insights.</div></div>
+      <div class="rm-card reveal d2"><div class="rm-phase">Phase 3 · Q1 2027</div><div class="rm-title">Network benchmarks</div><div class="rm-body">Anonymous cross-merchant comparisons by category — context only a platform with Shopify's scale can provide.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="wrap">
+    <div class="stag reveal">05 — Closing thought</div>
+    <h2 class="cl-h reveal">Great tools don't just show you data —<br><span>they help you know what to do with it.</span></h2>
+    <p class="cl-p reveal">Shopify already holds an incredible amount of useful information for every merchant on the platform. Foresight is an idea for making that information a little more accessible, a little more timely, and a lot more actionable — without any extra work from the merchant.</p>
+    <p class="cl-p reveal">I built this proposal to sharpen my product thinking and share it with the team. I'd love to hear where the thinking could go further.</p>
+    <div class="cta-row reveal">
+      <a href="prd.html" class="btn-p" style="text-decoration:none;">Read the full PRD →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">Shopify Foresight — A Feature Proposal</div>
+  <div class="fl">May 2026</div>
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }});
+  }, { threshold: 0.07, rootMargin: '0px 0px -24px 0px' });
+  els.forEach(el => obs.observe(el));
+  document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('in'), 100 + i * 110);
+  });
+</script>
+</body>
+</html>
